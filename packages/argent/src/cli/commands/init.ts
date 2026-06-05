@@ -1,0 +1,185 @@
+import type { ArgentEngine } from "../engine.js"
+import { theme } from "../../ui/theme.js"
+import { existsSync, readFileSync, writeFileSync, readdirSync, statSync } from "fs"
+import { join, relative } from "path"
+import { execSync } from "child_process"
+
+export function initCommand(engine: ArgentEngine): string {
+  const lines: string[] = []
+
+  lines.push("")
+  lines.push("╔══════════════════════════════════════════╗")
+  lines.push("║       Initialize — Generate AGENTS.md     ║")
+  lines.push("╚══════════════════════════════════════════╝")
+  lines.push("")
+
+  const wd = engine.config.getWorkingDir()
+
+  lines.push(`  Analyzing: ${wd}`)
+  lines.push("")
+
+  const analysis: string[] = []
+
+  if (existsSync(join(wd, "package.json"))) {
+    try {
+      const pkg = JSON.parse(readFileSync(join(wd, "package.json"), "utf-8"))
+      analysis.push(`  ● Found package.json (${pkg.name || "unnamed"})`)
+      if (pkg.scripts) {
+        const scripts = Object.keys(pkg.scripts).filter((s) =>
+          ["build", "test", "lint", "dev", "start", "typecheck"].includes(s)
+        )
+        if (scripts.length > 0) {
+          analysis.push(`    Scripts: ${scripts.join(", ")}`)
+        }
+      }
+      if (pkg.dependencies) {
+        const deps = Object.keys(pkg.dependencies)
+        analysis.push(`    Dependencies: ${deps.length} packages`)
+      }
+    } catch {
+      analysis.push("  ● Found package.json (could not parse)")
+    }
+  }
+
+  if (existsSync(join(wd, "tsconfig.json"))) {
+    analysis.push("  ● TypeScript project (tsconfig.json)")
+  }
+
+  if (existsSync(join(wd, "bunfig.toml")) || existsSync(join(wd, "bun.lock"))) {
+    analysis.push("  ● Bun runtime detected")
+  }
+
+  if (existsSync(join(wd, "Cargo.toml"))) {
+    analysis.push("  ● Rust project (Cargo.toml)")
+  }
+
+  if (existsSync(join(wd, "go.mod"))) {
+    analysis.push("  ● Go project (go.mod)")
+  }
+
+  if (existsSync(join(wd, "pyproject.toml")) || existsSync(join(wd, "setup.py"))) {
+    analysis.push("  ● Python project")
+  }
+
+  if (existsSync(join(wd, ".git"))) {
+    analysis.push("  ● Git repository initialized")
+  }
+
+  try {
+    const topDirs = readdirSync(wd, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && !d.name.startsWith(".") && !d.name.startsWith("node_modules"))
+      .slice(0, 10)
+      .map((d) => d.name)
+
+    analysis.push(`  ● Top-level dirs: ${topDirs.join(", ")}`)
+  } catch {
+    // silent
+  }
+
+  const tsFiles = countFiles(wd, ".ts", 3)
+  if (tsFiles > 0) {
+    analysis.push(`  ● ${tsFiles}+ TypeScript files`)
+  }
+
+  const jsFiles = countFiles(wd, ".js", 3)
+  if (jsFiles > 0) {
+    analysis.push(`  ● ${jsFiles}+ JavaScript files`)
+  }
+
+  for (const a of analysis) {
+    lines.push(a)
+  }
+
+  lines.push("")
+  lines.push("  ── Generated AGENTS.md ──")
+  lines.push("")
+
+  const agentsMd = generateAgentsMd(wd)
+
+  lines.push(agentsMd)
+  lines.push("")
+
+  const targetPath = join(wd, "AGENTS.md")
+  const overwrite = existsSync(targetPath) ? " (overwritten)" : ""
+
+  try {
+    writeFileSync(targetPath, agentsMd, "utf-8")
+    lines.push(`  ● AGENTS.md written to ${targetPath}${overwrite}`)
+  } catch (err) {
+    lines.push(`  ● Error writing AGENTS.md: ${err instanceof Error ? err.message : String(err)}`)
+  }
+
+  lines.push("")
+  lines.push("  ARGENT will use this file for instructions")
+  lines.push("  about build commands, code conventions, and tools.")
+
+  return lines.join("\n")
+}
+
+function countFiles(dir: string, ext: string, depth: number): number {
+  if (depth < 0) return 0
+  let count = 0
+  try {
+    const entries = readdirSync(dir, { withFileTypes: true })
+    for (const e of entries) {
+      if (e.name.startsWith(".") || e.name === "node_modules" || e.name === "dist") continue
+      const full = join(dir, e.name)
+      if (e.isDirectory()) {
+        count += countFiles(full, ext, depth - 1)
+      } else if (e.name.endsWith(ext)) {
+        count++
+      }
+    }
+  } catch {
+    // silent
+  }
+  return count
+}
+
+function generateAgentsMd(wd: string): string {
+  const lines: string[] = [
+    "# AGENTS.md",
+    "",
+    "This file provides instructions for ARGENT when working in this repository.",
+    "",
+  ]
+
+  if (existsSync(join(wd, "package.json"))) {
+    try {
+      const pkg = JSON.parse(readFileSync(join(wd, "package.json"), "utf-8"))
+      lines.push("## Build Commands")
+      const scripts = pkg.scripts ?? {}
+
+      if (scripts.build) lines.push(`- \`${getPackageManager(wd)} run build\` — Build the project`)
+      if (scripts.test) lines.push(`- \`${getPackageManager(wd)} test\` — Run all tests`)
+      if (scripts.typecheck) lines.push(`- \`${getPackageManager(wd)} run typecheck\` — Type-check`)
+      if (scripts.lint) lines.push(`- \`${getPackageManager(wd)} run lint\` — Lint`)
+      if (scripts.dev) lines.push(`- \`${getPackageManager(wd)} run dev\` — Start dev server`)
+      lines.push("")
+      lines.push("## Project Structure")
+      lines.push("- Auto-generated by ARGENT /init")
+      lines.push("")
+    } catch {
+      // skip
+    }
+  }
+
+  lines.push("## Code Conventions")
+  lines.push("- Follow existing patterns in the codebase")
+  lines.push("- No semicolons")
+  lines.push("- Prefer TypeScript")
+  lines.push("")
+  lines.push("## Notes")
+  lines.push("- Generated by ARGENT. Edit as needed.")
+  lines.push("- ARGENT reads this file for context on every run.")
+
+  return lines.join("\n")
+}
+
+function getPackageManager(wd: string): string {
+  if (existsSync(join(wd, "bun.lock"))) return "bun"
+  if (existsSync(join(wd, "bunfig.toml"))) return "bun"
+  if (existsSync(join(wd, "yarn.lock"))) return "yarn"
+  if (existsSync(join(wd, "pnpm-lock.yaml"))) return "pnpm"
+  return "npm"
+}

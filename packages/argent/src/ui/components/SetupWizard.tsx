@@ -46,7 +46,8 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
           return
         }
 
-        const envKey = selected.envVar ? process.env[selected.envVar] : undefined
+        const firstEnvVar = selected.envVars[0]
+        const envKey = firstEnvVar ? process.env[firstEnvVar] : undefined
         if (envKey) {
           onComplete(selected.id, envKey)
           return
@@ -111,39 +112,41 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
     <Box flexDirection="column" paddingX={2} paddingY={1}>
       <Box flexDirection="column" alignItems="center" marginBottom={1}>
         <Text>
-          <Text color={aurora[0]}>{theme.borders.heavy[0]}</Text>
-          <Text color={aurora[1]}>{theme.borders.thin.repeat(44)}</Text>
-          <Text color={aurora[7]}>{theme.borders.heavy[1]}</Text>
+          <Text color={aurora[0]}>{theme.chars.round[0]}</Text>
+          <Text color={aurora[1]}>{theme.chars.thin.repeat(44)}</Text>
+          <Text color={aurora[7]}>{theme.chars.round[1]}</Text>
         </Text>
-        <Text>
-          <Text color={aurora[1]}>{theme.borders.vertical}</Text>
+        <Box>
+          <Text color={aurora[1]}>{theme.chars.vertical}</Text>
           <Text>{" ".repeat(44)}</Text>
-          <Text color={aurora[6]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={aurora[2]}>{theme.borders.vertical}</Text>
+          <Text color={aurora[6]}>{theme.chars.vertical}</Text>
+        </Box>
+        <Box>
+          <Text color={aurora[2]}>{theme.chars.vertical}</Text>
           <Text>{"  "}</Text>
-          <Text color={theme.colors.accent}>{theme.borders.diamond}</Text>
-          <Text bold color={theme.colors.textWhite}>  A  R  G  E  N  T</Text>
+          <Text color={theme.colors.accent}>{theme.chars.diamond}</Text>
+          <Text bold color={theme.colors.textWhite}>
+            {"  A  R  G  E  N  T"}
+          </Text>
           <Text>{" ".repeat(24)}</Text>
-          <Text color={aurora[5]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={aurora[3]}>{theme.borders.vertical}</Text>
+          <Text color={aurora[5]}>{theme.chars.vertical}</Text>
+        </Box>
+        <Box>
+          <Text color={aurora[3]}>{theme.chars.vertical}</Text>
           <Text>{"  "}</Text>
-          <Text color={theme.colors.textDim}>Welcome! Let's set up your provider</Text>
-          <Text>{" ".repeat(10)}</Text>
-          <Text color={aurora[4]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={aurora[4]}>{theme.borders.vertical}</Text>
+          <Text color={theme.colors.textDim}>Welcome! Choose your provider</Text>
+          <Text>{" ".repeat(15)}</Text>
+          <Text color={aurora[4]}>{theme.chars.vertical}</Text>
+        </Box>
+        <Box>
+          <Text color={aurora[4]}>{theme.chars.vertical}</Text>
           <Text>{" ".repeat(44)}</Text>
-          <Text color={aurora[3]}>{theme.borders.vertical}</Text>
-        </Text>
+          <Text color={aurora[3]}>{theme.chars.vertical}</Text>
+        </Box>
         <Text>
-          <Text color={aurora[7]}>{theme.borders.heavy[2]}</Text>
-          <Text color={aurora[6]}>{theme.borders.thin.repeat(44)}</Text>
-          <Text color={aurora[0]}>{theme.borders.heavy[3]}</Text>
+          <Text color={aurora[7]}>{theme.chars.round[2]}</Text>
+          <Text color={aurora[6]}>{theme.chars.thin.repeat(44)}</Text>
+          <Text color={aurora[0]}>{theme.chars.round[3]}</Text>
         </Text>
       </Box>
 
@@ -151,7 +154,7 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
         <Box flexDirection="column">
           <Box marginBottom={1} paddingLeft={1}>
             <Text color={theme.colors.textDim}>
-              {theme.borders.arrow} Choose a provider:
+              {theme.chars.arrow} Choose a provider:
             </Text>
           </Box>
 
@@ -159,10 +162,12 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
             {providers.map((p, i) => (
               <Box key={p.id}>
                 <Text>
-                  <Text color={theme.colors.accentDim}>{theme.borders.branch}</Text>
-                  <Text color={theme.colors.border}>{theme.borders.connector}</Text>
+                  <Text color={theme.colors.accentDim}>{theme.chars.branch}</Text>
+                  <Text color={theme.colors.border}>{theme.chars.connector}</Text>
                   <Text color={theme.colors.accent}> [</Text>
-                  <Text bold color={theme.colors.textBright}>{String(i + 1).padStart(2, " ")}</Text>
+                  <Text bold color={theme.colors.textBright}>
+                    {String(i + 1).padStart(2, " ")}
+                  </Text>
                   <Text color={theme.colors.accent}>]</Text>
                   <Text>  </Text>
                   <Text color={theme.colors.text}>{p.name.padEnd(20, " ")}</Text>
@@ -175,11 +180,14 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
           <Box marginTop={1} flexDirection="column" paddingLeft={1}>
             {error ? (
               <Box marginBottom={1}>
-                <Text color={theme.colors.error}>  {theme.borders.arrow} {error}</Text>
+                <Text color={theme.colors.error}>
+                  {"  "}
+                  {theme.icons.error} {error}
+                </Text>
               </Box>
             ) : null}
             <Box>
-              <Text color={theme.colors.accentBright}>  {theme.borders.arrow} </Text>
+              <Text color={theme.colors.accentBright}>  {theme.chars.arrow} </Text>
               <TextInput
                 value={input}
                 onChange={setInput}
@@ -195,29 +203,34 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
         <Box flexDirection="column" paddingLeft={1}>
           <Box marginBottom={1}>
             <Text color={theme.colors.textDim}>
-              {theme.borders.arrow} Provider:{" "}
-              <Text bold color={theme.colors.accent}>{selectedProvider.name}</Text>
+              {theme.chars.arrow} Provider:{" "}
+              <Text bold color={theme.colors.accent}>
+                {selectedProvider.name}
+              </Text>
             </Text>
           </Box>
 
-          {selectedProvider.envVar && (
+          {selectedProvider.envVars[0] && (
             <Box marginBottom={1} paddingLeft={2}>
               <Text color={theme.colors.textMuted}>
-                {theme.borders.bullet} Or set{" "}
-                <Text color={theme.colors.code}>{selectedProvider.envVar}</Text>
-                {" "}environment variable
+                {theme.chars.bullet} Or set{" "}
+                <Text color={theme.colors.code}>{selectedProvider.envVars[0]}</Text>{" "}
+                environment variable
               </Text>
             </Box>
           )}
 
           {error ? (
             <Box marginBottom={1}>
-              <Text color={theme.colors.error}>  {theme.borders.arrow} {error}</Text>
+              <Text color={theme.colors.error}>
+                {"  "}
+                {theme.icons.error} {error}
+              </Text>
             </Box>
           ) : null}
 
           <Box paddingLeft={1}>
-            <Text color={theme.colors.accentBright}>  API Key {theme.borders.arrow} </Text>
+            <Text color={theme.colors.accentBright}>  API Key {theme.chars.arrow} </Text>
             <TextInput
               value={input}
               onChange={setInput}
@@ -229,7 +242,7 @@ export function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
 
           <Box marginTop={1} paddingLeft={2}>
             <Text color={theme.colors.textMuted}>
-              {theme.borders.bullet} Press Escape to skip (set later with /provider)
+              {theme.chars.bullet} Press Escape to skip (set later with /provider)
             </Text>
           </Box>
         </Box>

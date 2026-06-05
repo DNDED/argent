@@ -12,12 +12,14 @@ export function createAnthropicProvider(options: ProviderOptions): LLMProvider {
       if (m.role === "assistant") {
         const block: Record<string, unknown> = { role: "assistant", content: contentToAnthropic(m.content) }
         if (m.toolCalls?.length) {
-          block.content = m.toolCalls.map((tc: ToolCall) => ({
-            type: "tool_use",
-            id: tc.id,
-            name: tc.name,
-            input: tc.arguments,
-          }))
+          const blocks: Record<string, unknown>[] = []
+          if (m.content.some((c) => c.text)) {
+            blocks.push({ type: "text", text: m.content.map((c) => c.text || "").join("\n") })
+          }
+          for (const tc of m.toolCalls) {
+            blocks.push({ type: "tool_use", id: tc.id, name: tc.name, input: tc.arguments })
+          }
+          block.content = blocks
         }
         return block
       }

@@ -5,6 +5,7 @@ export { editTool } from "./edit.js"
 export { globTool } from "./glob.js"
 export { grepTool } from "./grep.js"
 export { webfetchTool } from "./webfetch.js"
+export { createSwarmTools } from "./swarm.js"
 
 import { bashTool } from "./bash.js"
 import { readTool } from "./read.js"

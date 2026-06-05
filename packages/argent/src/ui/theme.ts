@@ -1,50 +1,45 @@
 export const theme = {
   colors: {
-    bg: "#08080c",
-    surface: "#0f0f16",
-    surfaceRaised: "#16161f",
-    surfaceOverlay: "#1c1c28",
-    surfaceElevated: "#22222f",
-    border: "#1f1f2e",
-    borderSubtle: "#181825",
-    borderFocus: "#3d3d5c",
-    borderAccent: "rgba(99, 102, 241, 0.3)",
+    bg: "#05050a",
+    surface: "#0a0a14",
+    surfaceRaised: "#10101d",
+    surfaceOverlay: "#161626",
+    surfaceElevated: "#1c1c30",
+    border: "#1a1a2e",
+    borderSubtle: "#12121f",
+    borderFocus: "#3a3a58",
+    borderAccent: "rgba(99, 102, 241, 0.32)",
     accent: "#818cf8",
     accentBright: "#a5b4fc",
     accentDim: "#6366f1",
     accentAlt: "#c084fc",
     accentTertiary: "#22d3ee",
-    accentGlow: "rgba(129, 140, 248, 0.12)",
-    accentGlowStrong: "rgba(129, 140, 248, 0.25)",
+    accentGlow: "rgba(129, 140, 248, 0.14)",
+    accentGlowStrong: "rgba(129, 140, 248, 0.28)",
     text: "#c8c8d8",
-    textDim: "#6b6b82",
-    textMuted: "#4a4a5e",
+    textDim: "#8e8ea4",
+    textMuted: "#6e6e82",
     textBright: "#f0f0f8",
     textWhite: "#ffffff",
     success: "#34d399",
-    successDim: "rgba(52, 211, 153, 0.15)",
+    successDim: "rgba(52, 211, 153, 0.14)",
     warning: "#fbbf24",
-    warningDim: "rgba(251, 191, 36, 0.15)",
+    warningDim: "rgba(251, 191, 36, 0.14)",
     error: "#fb7185",
-    errorDim: "rgba(251, 113, 133, 0.15)",
+    errorDim: "rgba(251, 113, 133, 0.14)",
     info: "#60a5fa",
     code: "#c4b5fd",
     keyword: "#818cf8",
     string: "#34d399",
     number: "#fbbf24",
-    comment: "#4a4a5e",
+    comment: "#6e6e82",
     tag: "#fb7185",
     attribute: "#22d3ee",
-  },
-  fonts: {
-    ui: "Geist, Inter, system-ui",
-    code: "JetBrains Mono, Fira Code, monospace",
-  },
-  radii: {
-    sm: "6px",
-    md: "10px",
-    lg: "14px",
-    full: "9999px",
+    type: "#f0ab6b",
+    diffAdd: "#34d399",
+    diffAddBg: "rgba(52, 211, 153, 0.08)",
+    diffDel: "#fb7185",
+    diffDelBg: "rgba(251, 113, 133, 0.08)",
   },
   spacing: {
     xxs: 2,
@@ -56,7 +51,7 @@ export const theme = {
     xxl: 28,
     xxxl: 36,
   },
-  borders: {
+  chars: {
     thin: "─",
     light: "╌",
     dotted: "┄",
@@ -79,6 +74,44 @@ export const theme = {
     block: "█",
     blockLight: "░",
     blockMedium: "▒",
+    blockHeavy: "▓",
+    cursor: "▊",
+    check: "✓",
+    cross: "✗",
+    ellipsis: "…",
+    search: "⌕",
+    keyEnter: "⏎",
+    keyCtrl: "⌃",
+    keyShift: "⇧",
+    upDown: "↕",
+  },
+  icons: {
+    diamond: "◆",
+    dot: "●",
+    dotEmpty: "○",
+    arrow: "▸",
+    bullet: "•",
+    branch: "├─",
+    branchLast: "└─",
+    verticalBar: "│",
+    verticalDotted: "┊",
+    connector: "─",
+    prefix: "▸ ",
+    prompt: "❯",
+    promptDisabled: "○",
+    thinking: "◌",
+    success: "✓",
+    error: "✗",
+    warning: "⚠",
+    tool: "⚙",
+    search: "⌕",
+    keyboard: "⌨",
+    agentBuild: "●",
+    agentPlan: "○",
+    agentExplore: "◇",
+    diffAdd: "+",
+    diffDel: "-",
+    diffMod: "~",
   },
 } as const
 
@@ -113,21 +146,16 @@ export function multiGradient(stops: string[], steps: number): string[] {
   return colors.slice(0, steps)
 }
 
-export function fadeText(text: string, color: string, steps: number = 8): string[] {
-  const r = parseInt(color.slice(1, 3), 16)
-  const g = parseInt(color.slice(3, 5), 16)
-  const b = parseInt(color.slice(5, 7), 16)
-  const colors: string[] = []
-  for (let i = 0; i < steps; i++) {
-    const t = 1 - (i / (steps - 1)) * 0.7
-    const fr = Math.round(r * t)
-    const fg = Math.round(g * t)
-    const fb = Math.round(b * t)
-    colors.push(`#${fr.toString(16).padStart(2, "0")}${fg.toString(16).padStart(2, "0")}${fb.toString(16).padStart(2, "0")}`)
-  }
-  return colors
-}
-
 export function horizontalRule(width: number, char: string = "─"): string {
   return char.repeat(Math.max(0, width))
+}
+
+export function fuzzyMatch(query: string, target: string): boolean {
+  const q = query.toLowerCase()
+  const t = target.toLowerCase()
+  let qi = 0
+  for (let ti = 0; ti < t.length && qi < q.length; ti++) {
+    if (t[ti] === q[qi]) qi++
+  }
+  return qi === q.length
 }

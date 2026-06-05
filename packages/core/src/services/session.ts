@@ -62,7 +62,12 @@ export class SessionService {
     const session = this.sessions.get(sessionId)
     if (!session || session.messages.length === 0) return undefined
 
-    session.messages.pop()
-    return session.messages.pop()
+    while (session.messages.length > 0 && session.messages[session.messages.length - 1]!.role === "tool") {
+      session.messages.pop()
+    }
+    if (session.messages.length > 0 && session.messages[session.messages.length - 1]!.role === "assistant") {
+      return session.messages.pop()
+    }
+    return undefined
   }
 }

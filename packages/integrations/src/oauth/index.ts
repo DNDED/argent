@@ -150,7 +150,7 @@ export class OAuthManager {
       throw new Error(`Provider "${provider.name}" does not support OAuth`)
     }
     try {
-      return await this.startOAuth(provider.vendor)
+      return await this.startOAuth(provider.id)
     } catch {
       return null
     }

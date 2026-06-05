@@ -1,72 +1,69 @@
 import React from "react"
 import { Box, Text } from "ink"
-import { theme, gradient, multiGradient } from "../theme.js"
+import { theme, multiGradient } from "../theme.js"
 
-export function WelcomeScreen() {
+export function WelcomeScreen({ width = 80 }: { width?: number }) {
+  const innerWidth = Math.max(20, Math.min(width - 4, 58))
   const aurora = multiGradient(
     [theme.colors.accentDim, theme.colors.accent, theme.colors.accentAlt, theme.colors.accentTertiary],
-    40
+    Math.max(6, innerWidth + 2)
   )
-  const borderGrad = gradient(theme.colors.accentDim, theme.colors.accentAlt, 8)
 
   return (
     <Box flexDirection="column" alignItems="center" paddingY={2}>
       <Box flexDirection="column" alignItems="center">
         <Text>
-          <Text color={borderGrad[0]}>{theme.borders.heavy[0]}</Text>
-          <Text color={borderGrad[1]}>{theme.borders.thin.repeat(38)}</Text>
-          <Text color={borderGrad[7]}>{theme.borders.heavy[1]}</Text>
+          <Text color={aurora[0]}>{theme.chars.round[0]}</Text>
+          <Text color={aurora[4]}>{theme.chars.double.repeat(innerWidth)}</Text>
+          <Text color={aurora[aurora.length - 1]}>{theme.chars.round[1]}</Text>
         </Text>
-        <Text>
-          <Text color={borderGrad[1]}>{theme.borders.vertical}</Text>
-          <Text>{" ".repeat(38)}</Text>
-          <Text color={borderGrad[6]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={borderGrad[2]}>{theme.borders.vertical}</Text>
+        <Box>
+          <Text color={aurora[2]}>{theme.chars.vertical}</Text>
           <Text>{"  "}</Text>
-          <Text color={aurora[0]}>{theme.borders.diamond}</Text>
+          <Text color={aurora[10]}>{theme.chars.diamond}</Text>
           <Text>{" "}</Text>
-          <Text bold color={theme.colors.textWhite}>A  R  G  E  N  T</Text>
-          <Text>{" ".repeat(18)}</Text>
-          <Text color={borderGrad[5]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={borderGrad[3]}>{theme.borders.vertical}</Text>
+          <Text bold color={theme.colors.textWhite}>
+            A  R  G  E  N  T
+          </Text>
+          <Text>{" ".repeat(Math.max(0, innerWidth - 22))}</Text>
+          <Text color={aurora[aurora.length - 3]}>{theme.chars.vertical}</Text>
+        </Box>
+        <Box>
+          <Text color={aurora[2]}>{theme.chars.vertical}</Text>
           <Text>{"  "}</Text>
           <Text color={theme.colors.textDim}>The universal AI coding harness</Text>
-          <Text>{" ".repeat(6)}</Text>
-          <Text color={borderGrad[4]}>{theme.borders.vertical}</Text>
-        </Text>
+          <Text>{" ".repeat(Math.max(0, innerWidth - 36))}</Text>
+          <Text color={aurora[aurora.length - 3]}>{theme.chars.vertical}</Text>
+        </Box>
+        <Box>
+          <Text color={aurora[2]}>{theme.chars.vertical}</Text>
+          <Text>{" ".repeat(innerWidth)}</Text>
+          <Text color={aurora[aurora.length - 3]}>{theme.chars.vertical}</Text>
+        </Box>
         <Text>
-          <Text color={borderGrad[4]}>{theme.borders.vertical}</Text>
-          <Text>{" ".repeat(38)}</Text>
-          <Text color={borderGrad[3]}>{theme.borders.vertical}</Text>
-        </Text>
-        <Text>
-          <Text color={borderGrad[7]}>{theme.borders.heavy[2]}</Text>
-          <Text color={borderGrad[6]}>{theme.borders.thin.repeat(38)}</Text>
-          <Text color={borderGrad[0]}>{theme.borders.heavy[3]}</Text>
+          <Text color={aurora[0]}>{theme.chars.round[2]}</Text>
+          <Text color={aurora[4]}>{theme.chars.double.repeat(innerWidth)}</Text>
+          <Text color={aurora[aurora.length - 1]}>{theme.chars.round[3]}</Text>
         </Text>
       </Box>
 
       <Box marginTop={2} flexDirection="column" alignItems="center">
-        <Box flexDirection="column" gap={0}>
+        <Box flexDirection="column">
           <AgentRow
             active
-            symbol={theme.borders.dot}
+            symbol={theme.chars.dot}
             color={theme.colors.success}
             name="build"
             desc="Full-access development agent"
           />
           <AgentRow
-            symbol={theme.borders.dotEmpty}
+            symbol={theme.chars.dotEmpty}
             color={theme.colors.accentAlt}
             name="plan"
             desc="Read-only analysis & exploration"
           />
           <AgentRow
-            symbol={theme.borders.dotEmpty}
+            symbol={theme.chars.diamondEmpty}
             color={theme.colors.textMuted}
             name="explore"
             desc="Fast codebase search (subagent)"
@@ -76,25 +73,58 @@ export function WelcomeScreen() {
 
       <Box marginTop={2} flexDirection="column" alignItems="center">
         <Box marginBottom={1}>
-          <Text color={theme.colors.textMuted}>{theme.borders.dash.repeat(30)}</Text>
+          <Text color={theme.colors.textMuted}>{theme.chars.dotted.repeat(30)}</Text>
         </Box>
-        <Box flexDirection="column" gap={0}>
-          <CommandRow commands={["/agent", "/model", "/provider"]} descriptions={["Switch agent", "Switch model", "Change provider"]} />
-          <CommandRow commands={["/clear", "/share", "/help"]} descriptions={["New session", "Share session", "All commands"]} />
+        <Box flexDirection="column">
+          <Box gap={2}>
+            <Box>
+              <Text color={theme.colors.accent}>/agent</Text>
+              <Text color={theme.colors.textMuted}> Switch agent</Text>
+            </Box>
+            <Box>
+              <Text color={theme.colors.accent}>/model</Text>
+              <Text color={theme.colors.textMuted}> Switch model</Text>
+            </Box>
+            <Box>
+              <Text color={theme.colors.accent}>/provider</Text>
+              <Text color={theme.colors.textMuted}> Change provider</Text>
+            </Box>
+          </Box>
+          <Box gap={2}>
+            <Box>
+              <Text color={theme.colors.accent}>/clear</Text>
+              <Text color={theme.colors.textMuted}> New session</Text>
+            </Box>
+            <Box>
+              <Text color={theme.colors.accent}>/share</Text>
+              <Text color={theme.colors.textMuted}> Share session</Text>
+            </Box>
+            <Box>
+              <Text color={theme.colors.accent}>/help</Text>
+              <Text color={theme.colors.textMuted}> All commands</Text>
+            </Box>
+          </Box>
         </Box>
       </Box>
 
       <Box marginTop={2}>
         <Text color={theme.colors.textDim}>Type a message to begin</Text>
-        <Text color={theme.colors.textMuted}> {theme.borders.dash} </Text>
-        <Text color={theme.colors.accent}>/help</Text>
-        <Text color={theme.colors.textMuted}> for all commands</Text>
+        <Text color={theme.colors.textMuted}> {theme.chars.dash} </Text>
+        <Text color={theme.colors.textDim}>
+          <Text color={theme.colors.accent}>{theme.chars.keyCtrl}+K</Text> for command palette
+        </Text>
       </Box>
     </Box>
   )
 }
 
-function AgentRow({ active, symbol, color, name, desc }: {
+function AgentRow({
+  active,
+  symbol,
+  color,
+  name,
+  desc,
+}: {
   active?: boolean
   symbol: string
   color: string
@@ -104,21 +134,8 @@ function AgentRow({ active, symbol, color, name, desc }: {
   return (
     <Box>
       <Text color={color}>{symbol}</Text>
-      <Text color={active ? theme.colors.textBright : theme.colors.text}> {name.padEnd(8)}</Text>
+      <Text color={active ? theme.colors.textBright : theme.colors.text}>{" "}{name.padEnd(8)}</Text>
       <Text color={theme.colors.textDim}>{desc}</Text>
-    </Box>
-  )
-}
-
-function CommandRow({ commands, descriptions }: { commands: string[]; descriptions: string[] }) {
-  return (
-    <Box gap={2}>
-      {commands.map((cmd, i) => (
-        <Box key={cmd}>
-          <Text color={theme.colors.accent}>{cmd}</Text>
-          <Text color={theme.colors.textMuted}> {descriptions[i]}</Text>
-        </Box>
-      ))}
     </Box>
   )
 }

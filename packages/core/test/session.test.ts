@@ -44,15 +44,23 @@ describe("SessionService", () => {
     expect(updated?.agentName).toBe("plan")
   })
 
-  test("undo removes last messages", () => {
+  test("undo removes last exchange (assistant + tool results)", () => {
     const session = sessions.create("build", { provider: "openai", model: "gpt-4o" }, "/tmp")
 
     sessions.addMessage(session.id, { role: "user", content: [{ type: "text", text: "q1" }] })
     sessions.addMessage(session.id, { role: "assistant", content: [{ type: "text", text: "a1" }] })
+    sessions.addMessage(session.id, { role: "tool", toolCallId: "t1", content: [{ type: "text", text: "r1" }] })
+    sessions.addMessage(session.id, { role: "tool", toolCallId: "t2", content: [{ type: "text", text: "r2" }] })
 
     sessions.undo(session.id)
 
-    expect(sessions.getMessages(session.id).length).toBe(0)
+    expect(sessions.getMessages(session.id).length).toBe(1)
+    expect(sessions.getMessages(session.id)[0]!.role).toBe("user")
+  })
+
+  test("undo returns undefined on empty session", () => {
+    const session = sessions.create("build", { provider: "openai", model: "gpt-4o" }, "/tmp")
+    expect(sessions.undo(session.id)).toBeUndefined()
   })
 
   test("deletes session", () => {

@@ -10,7 +10,7 @@ interface PermissionPromptProps {
   onAllowOnce: () => void
 }
 
-export function PermissionPrompt({ toolName, reason, onAllow: _onAllow, onDeny: _onDeny, onAllowOnce: _onAllowOnce }: PermissionPromptProps) {
+export function PermissionPrompt({ toolName, reason, onAllow, onDeny, onAllowOnce }: PermissionPromptProps) {
   return (
     <Box
       flexDirection="column"
@@ -21,9 +21,9 @@ export function PermissionPrompt({ toolName, reason, onAllow: _onAllow, onDeny: 
     >
       <Box marginBottom={1} alignItems="center">
         <Text bold color={theme.colors.warning}>
-          {theme.borders.diamond} Permission Required
+          {theme.chars.diamond} Permission Required
         </Text>
-        <Text color={theme.colors.textMuted}> {theme.borders.dash} </Text>
+        <Text color={theme.colors.textMuted}> {theme.chars.dash} </Text>
         <Text color={theme.colors.code}>{toolName}</Text>
       </Box>
 
@@ -33,15 +33,21 @@ export function PermissionPrompt({ toolName, reason, onAllow: _onAllow, onDeny: 
 
       <Box gap={3} paddingLeft={2}>
         <Box>
-          <Text bold color={theme.colors.success}>y</Text>
-          <Text color={theme.colors.textDim}> allow</Text>
+          <Text bold color={theme.colors.success}>
+            y
+          </Text>
+          <Text color={theme.colors.textDim}> allow always</Text>
         </Box>
         <Box>
-          <Text bold color={theme.colors.warning}>a</Text>
+          <Text bold color={theme.colors.warning}>
+            a
+          </Text>
           <Text color={theme.colors.textDim}> allow once</Text>
         </Box>
         <Box>
-          <Text bold color={theme.colors.error}>n</Text>
+          <Text bold color={theme.colors.error}>
+            n
+          </Text>
           <Text color={theme.colors.textDim}> deny</Text>
         </Box>
       </Box>

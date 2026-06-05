@@ -1,4 +1,32 @@
 import type { ArgentConfig, ProviderConfig, Agent, ToolPermission } from "../types.js"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { homedir } from "node:os"
+
+function loadEnvFile(path: string): void {
+  try {
+    const content = readFileSync(path, "utf-8")
+    for (const line of content.split("\n")) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith("#")) continue
+      const eqIdx = trimmed.indexOf("=")
+      if (eqIdx === -1) continue
+      const key = trimmed.slice(0, eqIdx).trim()
+      let value = trimmed.slice(eqIdx + 1).trim()
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1)
+      }
+      if (!process.env[key]) {
+        process.env[key] = value
+      }
+    }
+  } catch {}
+}
+
+function loadDotEnv(workingDir: string): void {
+  loadEnvFile(join(workingDir, ".env"))
+  loadEnvFile(join(homedir(), ".argent", ".env"))
+}
 
 const DEFAULT_AGENTS: Agent[] = [
   {
@@ -85,6 +113,7 @@ export class ConfigService {
 
   constructor(workingDir?: string) {
     this.workingDir = workingDir || process.cwd()
+    loadDotEnv(this.workingDir)
     this.config = { ...DEFAULT_CONFIG }
     this.agents = [...DEFAULT_AGENTS]
     this.loadConfig()

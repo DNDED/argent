@@ -1,6 +1,6 @@
 {
   "name": "argent",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "ARGENT — The universal AI coding harness. Any model, any provider, any platform.",
   "type": "module",
   "main": "dist/main.js",
@@ -9,7 +9,7 @@
   },
   "files": [
     "bin/",
-    "dist/",
+    "dist/main.js",
     "README.md"
   ],
   "scripts": {

@@ -51,6 +51,7 @@ export interface ToolResultMessage {
   role: "tool"
   toolCallId: string
   content: ToolResultContent[]
+  isError?: boolean
 }
 
 export type Message = UserMessage | AssistantMessage | ToolResultMessage

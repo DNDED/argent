@@ -68,7 +68,7 @@ export function renderApiKeyPrompt(provider: ProviderDescriptor): string {
     return `${provider.name} uses OAuth. Run /oauth ${provider.id} to authenticate.`
   }
 
-  const envVar = provider.envVar || "API_KEY"
+  const envVar = provider.envVars[0] || "API_KEY"
   return `Enter your ${provider.name} API key (or set ${envVar} env var):\n  Key: `
 }
 

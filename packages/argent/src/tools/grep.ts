@@ -22,7 +22,7 @@ export const grepTool: ToolDef = {
     const searchPath = (params.path as string) || ctx.workingDirectory
 
     try {
-      const regex = new RegExp(patternStr, "gi")
+      const regex = new RegExp(patternStr, "i")
       const results: string[] = []
       await grepDir(searchPath, regex, include, searchPath, results)
 

@@ -49,6 +49,10 @@ export class PermissionService {
     this.decisions.set(`${sessionId}:${toolName}`, "deny")
   }
 
+  clearDecision(sessionId: string, toolName: string): void {
+    this.decisions.delete(`${sessionId}:${toolName}`)
+  }
+
   reset(sessionId?: string): void {
     if (sessionId) {
       for (const key of this.decisions.keys()) {

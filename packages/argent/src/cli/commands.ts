@@ -7,6 +7,42 @@ import { renderSetupPrompt, processSetupSelection, renderApiKeyPrompt } from "./
 import { listProviders, getProvider, PROVIDERS } from "@argent/integrations"
 import type { ProviderDescriptor } from "@argent/integrations"
 
+import { compactCommand } from "./commands/compact.js"
+import { forkCommand } from "./commands/fork.js"
+import { resumeCommand } from "./commands/resume.js"
+import { rewindCommand } from "./commands/rewind.js"
+import { branchCommand } from "./commands/branch.js"
+import { renameCommand } from "./commands/rename.js"
+
+import { diffCommand } from "./commands/diff.js"
+import { reviewCommand } from "./commands/review.js"
+import { lintCommand } from "./commands/lint.js"
+import { securityCommand } from "./commands/security.js"
+import { testCommand } from "./commands/test.js"
+
+import { costCommand } from "./commands/cost.js"
+import { doctorCommand } from "./commands/doctor.js"
+import { statsCommand } from "./commands/stats.js"
+import { contextCommand } from "./commands/context.js"
+import { historyCommand, addToHistory } from "./commands/history.js"
+
+import { updateCommand } from "./commands/update.js"
+import { installCommand } from "./commands/install.js"
+import { memoryCommand } from "./commands/memory.js"
+import { themeCommand } from "./commands/theme.js"
+import { vimCommand } from "./commands/vim.js"
+import { voiceCommand } from "./commands/voice.js"
+
+import { specCommand } from "./commands/spec.js"
+import { initCommand } from "./commands/init.js"
+import { prCommand } from "./commands/pr.js"
+import { issueCommand } from "./commands/issue.js"
+import { fixCommand } from "./commands/fix.js"
+import { explainCommand } from "./commands/explain.js"
+
+import { paletteCommand, getPaletteActions } from "./commands/palette.js"
+import { shortcutsCommand } from "./commands/shortcuts.js"
+
 export class CommandHandler {
   private engine: ArgentEngine
 
@@ -22,6 +58,8 @@ export class CommandHandler {
     const args = parts.slice(1)
 
     if (!cmd) return { handled: true }
+
+    addToHistory(cmd + (args.length ? " " + args.join(" ") : ""))
 
     switch (cmd) {
       case "/help":
@@ -87,6 +125,102 @@ export class CommandHandler {
       case "/status":
         return { handled: true, message: this.showStatus() }
 
+      // ─── Session Commands ───
+      case "/compact":
+        return { handled: true, message: compactCommand(this.engine) }
+
+      case "/fork":
+        return { handled: true, message: forkCommand(args, this.engine) }
+
+      case "/resume":
+        return { handled: true, message: resumeCommand(args, this.engine) }
+
+      case "/rewind":
+        return { handled: true, message: rewindCommand(this.engine) }
+
+      case "/branch":
+        return { handled: true, message: branchCommand(args, this.engine) }
+
+      case "/rename":
+        return { handled: true, message: renameCommand(args, this.engine) }
+
+      // ─── Review Commands ───
+      case "/diff":
+        return { handled: true, message: diffCommand(this.engine) }
+
+      case "/review":
+        return { handled: true, message: reviewCommand(this.engine) }
+
+      case "/lint":
+        return { handled: true, message: lintCommand(this.engine) }
+
+      case "/security":
+        return { handled: true, message: securityCommand(this.engine) }
+
+      case "/test":
+        return { handled: true, message: testCommand(args, this.engine) }
+
+      // ─── Info Commands ───
+      case "/cost":
+        return { handled: true, message: costCommand(this.engine) }
+
+      case "/doctor":
+        return { handled: true, message: doctorCommand(this.engine) }
+
+      case "/stats":
+        return { handled: true, message: statsCommand(this.engine) }
+
+      case "/context":
+        return { handled: true, message: contextCommand(this.engine) }
+
+      case "/history":
+        return { handled: true, message: historyCommand(args, this.engine) }
+
+      // ─── Setup Commands ───
+      case "/update":
+        return { handled: true, message: updateCommand(this.engine) }
+
+      case "/install":
+        return { handled: true, message: installCommand(args, this.engine) }
+
+      case "/memory":
+        return { handled: true, message: memoryCommand(args, this.engine) }
+
+      case "/theme":
+        return { handled: true, message: themeCommand(args, this.engine) }
+
+      case "/vim":
+        return { handled: true, message: vimCommand(this.engine) }
+
+      case "/voice":
+        return { handled: true, message: voiceCommand(this.engine) }
+
+      // ─── Workflow Commands ───
+      case "/spec":
+        return { handled: true, message: specCommand(args, this.engine) }
+
+      case "/init":
+        return { handled: true, message: initCommand(this.engine) }
+
+      case "/pr":
+        return { handled: true, message: prCommand(args, this.engine) }
+
+      case "/issue":
+        return { handled: true, message: issueCommand(args, this.engine) }
+
+      case "/fix":
+        return { handled: true, message: fixCommand(args, this.engine) }
+
+      case "/explain":
+        return { handled: true, message: explainCommand(args, this.engine) }
+
+      // ─── Discovery Commands ───
+      case "/palette":
+        return { handled: true, message: paletteCommand(this.engine) }
+
+      case "/shortcuts":
+        return { handled: true, message: shortcutsCommand(this.engine) }
+
       default:
         return { handled: true, message: `Unknown command: ${cmd}. Type /help for available commands.` }
     }
@@ -94,24 +228,75 @@ export class CommandHandler {
 
   private showHelp(): string {
     return `
-Available Commands:
-  /agent [name]         Switch agent (build, plan, explore)
-  /model [name]         Switch model
-  /provider [name|#]    Change provider (37 available)
-  /oauth <provider>     Start OAuth flow
-  /oauth status         Show OAuth token statuses
-  /oauth revoke <p>     Revoke OAuth token
-  /setup                Re-run first-run setup
-  /clear                Start a new session
-  /undo                 Revert last change
-  /status               Show current status
-  /help                 Show this help
-  /exit                 Quit ARGENT
-
-Default keybinds:
-  Tab               Switch agent
-  Ctrl+C            Quit
-  Enter             Send message
+╔══════════════════════════════════════════════════════════════╗
+║                        ARGENT Commands                       ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  Core                                                        ║
+║    /agent [name]        Switch agent (build, plan, explore)   ║
+║    /model [name]        Switch AI model                       ║
+║    /provider [name|#]   Change provider                       ║
+║    /oauth <provider>    Start OAuth flow                      ║
+║    /oauth status        Show OAuth statuses                   ║
+║    /oauth revoke <p>    Revoke OAuth token                    ║
+║    /setup               Re-run first-run setup                ║
+║    /clear               Start a new session                   ║
+║    /undo                Revert last change                    ║
+║    /status              Show current status                   ║
+║                                                              ║
+║  Session                                                     ║
+║    /compact             Summarize and reduce context          ║
+║    /fork [name]         Fork current session                  ║
+║    /resume [session]    Resume a past session                 ║
+║    /rewind              Show checkpoint options               ║
+║    /branch [name]       Create named session branch           ║
+║    /rename [name]       Rename current session                ║
+║                                                              ║
+║  Review                                                      ║
+║    /diff                Show inline diffs                     ║
+║    /review              Review pending changes                ║
+║    /lint                Run linter and show results           ║
+║    /security            Run security scan on changes          ║
+║    /test [pattern]      Run tests with optional pattern       ║
+║                                                              ║
+║  Info                                                        ║
+║    /cost                Show detailed cost breakdown          ║
+║    /doctor              Diagnose configuration issues         ║
+║    /stats               Show usage statistics                 ║
+║    /context             Show context window usage             ║
+║    /history             Show recent command history           ║
+║                                                              ║
+║  Setup                                                       ║
+║    /update              Check for ARGENT updates              ║
+║    /install             Install/upgrade ARGENT                ║
+║    /memory              View/edit persistent memory           ║
+║    /theme [name]        Switch theme (dark/light/contrast)    ║
+║    /vim                 Toggle vim mode keybindings           ║
+║    /voice               Toggle voice input mode               ║
+║                                                              ║
+║  Workflow                                                    ║
+║    /spec [topic]        Start spec-driven development         ║
+║    /init                Generate AGENTS.md for project        ║
+║    /pr [title]          Create a PR with current changes      ║
+║    /issue [title]       Create a GitHub issue                 ║
+║    /fix [issue]         Attempt to fix a GitHub issue         ║
+║    /explain [code]      Explain a piece of code               ║
+║                                                              ║
+║  Discovery                                                    ║
+║    /shortcuts           Show keyboard shortcuts               ║
+║    Ctrl+K               Open command palette                  ║
+║                                                              ║
+║  Other                                                       ║
+║    /help                Show this help                        ║
+║    /exit                Quit ARGENT                           ║
+║                                                              ║
+║  Keybinds                                                     ║
+║    Tab                  Switch agent                          ║
+║    Ctrl+C               Quit                                  ║
+║    Ctrl+K               Command palette                       ║
+║    Enter                Send message                          ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
 `
   }
 

@@ -143,6 +143,8 @@ export function createOpenAIProvider(options: ProviderOptions): LLMProvider {
                 outputTokens = event.usage.completion_tokens || 0
               }
 
+              const choice = event.choices?.[0]
+
               if (choice?.finish_reason) {
                 for (const [idx, toolCall] of toolCallBuffers) {
                   try {

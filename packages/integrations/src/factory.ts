@@ -1,8 +1,9 @@
 import type { LLMProvider, ProviderOptions } from "@argent/llm"
-import type { ProviderDescriptor } from "./registry/index.js"
+import type { ProviderDescriptor } from "./descriptors/provider.js"
 import { createAnthropicProvider } from "@argent/llm/anthropic"
 import { createOpenAIProvider } from "@argent/llm/openai"
 import { createOllamaProvider } from "@argent/llm/ollama"
+import { createGeminiProvider } from "@argent/llm/gemini"
 
 export interface ProviderCredentials {
   apiKey?: string
@@ -34,6 +35,7 @@ export function createProviderFromDescriptor(
       return createOpenAIProvider(options)
 
     case "codex":
+    case "codex-responses":
       return createOpenAIProvider({
         ...options,
         headers: {
@@ -43,7 +45,8 @@ export function createProviderFromDescriptor(
       })
 
     case "gemini":
-      return createOpenAIProvider(options)
+    case "gemini-native":
+      return createGeminiProvider(options)
 
     case "custom":
       return createOpenAIProvider(options)
@@ -56,8 +59,12 @@ export function createProviderFromDescriptor(
 export function createProviderFromEnv(descriptor: ProviderDescriptor): LLMProvider | null {
   let apiKey: string | undefined
 
-  if (descriptor.envVar) {
-    apiKey = process.env[descriptor.envVar]
+  for (const envVar of descriptor.envVars) {
+    const val = process.env[envVar]
+    if (val) {
+      apiKey = val
+      break
+    }
   }
 
   if (!apiKey && descriptor.authType !== "none" && descriptor.authType !== "oauth") {
@@ -75,9 +82,9 @@ export function autoDetectProvider(descriptors: Record<string, ProviderDescripto
   provider: ProviderDescriptor
   credentials: ProviderCredentials
 } | null {
-  for (const [id, descriptor] of Object.entries(descriptors)) {
-    if (descriptor.envVar) {
-      const apiKey = process.env[descriptor.envVar]
+  for (const descriptor of Object.values(descriptors)) {
+    for (const envVar of descriptor.envVars) {
+      const apiKey = process.env[envVar]
       if (apiKey) {
         return {
           provider: descriptor,

@@ -6,53 +6,49 @@ interface HeaderProps {
   agentName: string
   agentColor: string
   agentNames: string[]
-  onAgentSwitch: (name: string) => void
-  width: number
+  onAgentSwitch: (_name: string) => void
+  maxWidth: number
 }
 
-export function Header({ agentName, agentColor, agentNames, onAgentSwitch: _onAgentSwitch }: HeaderProps) {
+export function Header({ agentName, agentColor, agentNames, onAgentSwitch: _onAgentSwitch, maxWidth }: HeaderProps) {
   const brandColors = gradient(theme.colors.accentDim, theme.colors.accentAlt, 5)
 
+  const ruleWidth = Math.max(0, maxWidth - 4 - agentNames.join("").length - 8)
+
   return (
-    <Box
-      flexDirection="row"
-      paddingX={1}
-      paddingY={0}
-      alignItems="center"
-    >
-      <Box marginRight={1}>
-        <Text>
-          <Text color={brandColors[0]}>{theme.borders.diamond}</Text>
-          <Text bold color={theme.colors.textWhite}> argent</Text>
-        </Text>
-      </Box>
+    <Box flexDirection="column" paddingX={1} paddingY={0}>
+      <Box flexDirection="row" alignItems="center" marginBottom={0}>
+        <Box marginRight={1}>
+          <Text>
+            <Text color={brandColors[0]}>{theme.chars.diamond}</Text>
+            <Text bold color={theme.colors.textWhite}> argent</Text>
+          </Text>
+        </Box>
 
-      <Box>
-        <Text color={theme.colors.textMuted}>{theme.borders.verticalLight}</Text>
-      </Box>
+        <Box flexGrow={1}>
+          <Text color={theme.colors.borderSubtle}>
+            {theme.chars.connector.repeat(Math.max(0, ruleWidth))}
+          </Text>
+        </Box>
 
-      <Box flexDirection="row" gap={1} marginLeft={1}>
-        {agentNames.map((name) => {
-          const isActive = name === agentName
-          return (
-            <Box key={name} paddingX={1}>
-              <Text
-                color={isActive ? agentColor : theme.colors.textMuted}
-                bold={isActive}
-              >
-                {isActive ? theme.borders.dot : theme.borders.dotEmpty} {name}
-              </Text>
-            </Box>
-          )
-        })}
-      </Box>
-
-      <Box flexGrow={1} />
-
-      <Box>
-        <Text color={theme.colors.textMuted} dimColor>
-          {theme.borders.bullet} tab to switch
-        </Text>
+        <Box flexDirection="row">
+          {agentNames.map((name, i) => {
+            const isActive = name === agentName
+            return (
+              <React.Fragment key={name}>
+                {i > 0 && (
+                  <Text color={theme.colors.textMuted}> {theme.chars.verticalLight} </Text>
+                )}
+                <Text
+                  color={isActive ? agentColor : theme.colors.textMuted}
+                  bold={isActive}
+                >
+                  {isActive ? theme.chars.dot : theme.chars.dotEmpty} {name}
+                </Text>
+              </React.Fragment>
+            )
+          })}
+        </Box>
       </Box>
     </Box>
   )

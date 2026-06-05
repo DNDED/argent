@@ -28,9 +28,12 @@ export class ArgentEngine {
   onEvent: (event: UIEvent) => void = () => {}
   private totalTokensIn = 0
   private totalTokensOut = 0
-  private permissionQueue: Array<{ resolve: (v: boolean) => void }> = []
+  private permissionQueue: Array<{ resolve: (v: boolean) => void; sessionId: string; toolName: string }> = []
+  private onceAllowed: Set<string> = new Set()
   private oauthManager: OAuthManager
   private currentProviderDescriptor: ProviderDescriptor | null = null
+  private abortController: AbortController | null = null
+  private systemPromptSent = false
 
   constructor(workingDir?: string) {
     this.config = new ConfigService(workingDir)
@@ -44,7 +47,7 @@ export class ArgentEngine {
     this.permissions.setHandler(async (req) => {
       this.onEvent({ type: "permission_needed", toolName: req.toolName, reason: req.reason })
       return new Promise((resolve) => {
-        this.permissionQueue.push({ resolve })
+        this.permissionQueue.push({ resolve, sessionId: req.sessionId, toolName: req.toolName })
       })
     })
 
@@ -62,7 +65,8 @@ export class ArgentEngine {
 
     const detected = findProviderByEnvVar()
     if (detected) {
-      const apiKey = detected.envVar ? process.env[detected.envVar] || "" : ""
+      const firstEnvVar = detected.envVars[0]
+      const apiKey = firstEnvVar ? process.env[firstEnvVar] || "" : ""
       this.currentProviderDescriptor = detected
       this.config.setProvider({
         type: detected.transport === "anthropic-native" ? "anthropic" : detected.transport === "custom" ? "openai-compatible" : detected.transport === "gemini" ? "openai-compatible" : "openai",
@@ -123,7 +127,7 @@ export class ArgentEngine {
 
     this.currentProviderDescriptor = desc
 
-    const key = apiKey || (desc.envVar ? process.env[desc.envVar] || "" : "")
+    const key = apiKey || (desc.envVars[0] ? process.env[desc.envVars[0]] || "" : "")
 
     let type: ProviderConfig["type"] = "openai"
     if (desc.transport === "anthropic-native") type = "anthropic"
@@ -246,6 +250,8 @@ export class ArgentEngine {
       }
     }
 
+    this.abortController = new AbortController()
+
     if (!this.sessionId) {
       const agent = this.getAgent() || this.config.getAgent("build")!
       const pc = this.config.getProvider()!
@@ -255,6 +261,7 @@ export class ArgentEngine {
         this.config.getWorkingDir()
       )
       this.sessionId = session.id
+      this.systemPromptSent = false
     }
 
     const agent = this.getAgent()!
@@ -269,6 +276,24 @@ export class ArgentEngine {
     await this.runAgentLoop(agent)
   }
 
+  cancelStreaming(): void {
+    if (this.abortController) {
+      this.abortController.abort()
+      this.abortController = null
+      this.onEvent({ type: "stream_stop" })
+    }
+  }
+
+  undoLastExchange(): void {
+    if (!this.sessionId) return
+    this.sessions.undo(this.sessionId)
+    this.systemPromptSent = false
+    const msgs = this.sessions.getMessages(this.sessionId)
+    for (const msg of msgs) {
+      this.onEvent({ type: "message", message: msg })
+    }
+  }
+
   private async runAgentLoop(agent: Agent): Promise<void> {
     const maxLoops = 25
     let loopCount = 0
@@ -276,12 +301,18 @@ export class ArgentEngine {
     while (loopCount < maxLoops) {
       loopCount++
       const messages = this.sessions.getMessages(this.sessionId!)
-      const systemMsg = this.buildSystemMessage(agent)
 
-      const allMsgs = [
-        { role: "user", content: [{ type: "text", text: systemMsg }] } as UserMessage,
-        ...messages,
-      ]
+      let allMsgs: Message[]
+      if (!this.systemPromptSent) {
+        const systemMsg = this.buildSystemMessage(agent)
+        allMsgs = [
+          { role: "user", content: [{ type: "text", text: systemMsg }] } as UserMessage,
+          ...messages,
+        ]
+        this.systemPromptSent = true
+      } else {
+        allMsgs = messages
+      }
 
       const allowedTools = this.tools.listAllowed(agent.tools)
       const toolDefs = allowedTools.map((t) => ({
@@ -353,7 +384,53 @@ export class ArgentEngine {
 
       if (toolCalls.length === 0) return
 
+      const parallelTools = new Set(["read", "grep", "glob"])
+      const sequentialCalls: typeof toolCalls = []
+      const parallelCalls: typeof toolCalls = []
+
       for (const tc of toolCalls) {
+        if (parallelTools.has(tc.name)) {
+          parallelCalls.push(tc)
+        } else {
+          sequentialCalls.push(tc)
+        }
+      }
+
+      if (parallelCalls.length > 0) {
+        const results = await Promise.all(
+          parallelCalls.map(async (tc) => {
+            const allowed = await this.permissions.check(tc.name, tc.arguments, this.sessionId!)
+            if (!allowed) {
+              this.onEvent({ type: "permission_denied", toolName: tc.name })
+              return { tc, allowed: false }
+            }
+            const ctx = {
+              sessionId: this.sessionId!,
+              workingDirectory: this.config.getWorkingDir(),
+              agentName: agent.name,
+            }
+            const result = await this.tools.execute(tc.name, tc.arguments, ctx)
+            this.onEvent({ type: "tool_result", result, toolCallId: tc.id })
+            return { tc, allowed: true, result }
+          })
+        )
+        for (const r of results) {
+          const onceKey = `${this.sessionId!}:${r.tc.name}`
+          if (this.onceAllowed.has(onceKey)) {
+            this.permissions.clearDecision(this.sessionId!, r.tc.name)
+            this.onceAllowed.delete(onceKey)
+          }
+          const toolMsg: ToolResultMessage = {
+            role: "tool",
+            toolCallId: r.tc.id,
+            content: r.allowed ? r.result!.content : [{ type: "text" as const, text: `Permission denied for tool "${r.tc.name}"` }],
+            isError: r.allowed ? r.result!.isError : true,
+          }
+          this.sessions.addMessage(this.sessionId!, toolMsg)
+        }
+      }
+
+      for (const tc of sequentialCalls) {
         const allowed = await this.permissions.check(tc.name, tc.arguments, this.sessionId!)
         if (!allowed) {
           this.onEvent({ type: "permission_denied", toolName: tc.name })
@@ -361,6 +438,7 @@ export class ArgentEngine {
             role: "tool",
             toolCallId: tc.id,
             content: [{ type: "text", text: `Permission denied for tool "${tc.name}"` }],
+            isError: true,
           }
           this.sessions.addMessage(this.sessionId!, errMsg)
           continue
@@ -375,19 +453,40 @@ export class ArgentEngine {
         const result = await this.tools.execute(tc.name, tc.arguments, ctx)
         this.onEvent({ type: "tool_result", result, toolCallId: tc.id })
 
+        const onceKey = `${this.sessionId!}:${tc.name}`
+        if (this.onceAllowed.has(onceKey)) {
+          this.permissions.clearDecision(this.sessionId!, tc.name)
+          this.onceAllowed.delete(onceKey)
+        }
+
         const toolMsg: ToolResultMessage = {
           role: "tool",
           toolCallId: tc.id,
           content: result.content,
+          isError: result.isError,
         }
         this.sessions.addMessage(this.sessionId!, toolMsg)
       }
     }
   }
 
-  resolvePermission(allowed: boolean): void {
+  resolveAllow(): void {
     const next = this.permissionQueue.shift()
-    if (next) next.resolve(allowed)
+    if (next) next.resolve(true)
+  }
+
+  resolveAllowOnce(): void {
+    const next = this.permissionQueue.shift()
+    if (next) {
+      this.permissions.allowOnce(next.sessionId, next.toolName)
+      this.onceAllowed.add(`${next.sessionId}:${next.toolName}`)
+      next.resolve(false)
+    }
+  }
+
+  resolveDeny(): void {
+    const next = this.permissionQueue.shift()
+    if (next) next.resolve(false)
   }
 
   private buildSystemMessage(agent: Agent): string {
