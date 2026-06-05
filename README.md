@@ -4,14 +4,24 @@ The universal AI coding harness. Any model, any provider, any platform.
 
 ## Quick Start
 
+**macOS / Linux:**
 ```bash
-# Install globally
-npm i -g argent
+curl -fsSL https://raw.githubusercontent.com/DNDED/argent/master/scripts/install.sh | bash
+argent
+```
 
-# Or via curl
-curl -fsSL https://argent.dev/install | bash
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/DNDED/argent/master/scripts/install.ps1 | iex
+argent
+```
 
-# Launch
+**From source (any platform):**
+```bash
+git clone https://github.com/DNDED/argent.git
+cd argent
+bun install
+cd packages/argent && npm link
 argent
 ```
 
