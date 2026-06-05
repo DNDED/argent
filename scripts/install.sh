@@ -3,7 +3,7 @@ set -euo pipefail
 
 RIGAL_VERSION="${RIGAL_VERSION:-latest}"
 RIGAL_INSTALL_DIR="${RIGAL_INSTALL_DIR:-$HOME/.rigal/bin}"
-RIGAL_REPO="rigal-ai/rigal"
+RIGAL_REPO="DNDED/rigal"
 
 BOLD="\033[1m"
 DIM="\033[2m"
