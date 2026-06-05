@@ -170,9 +170,9 @@ function getRefreshUrl(provider: string): string {
 function getRefreshClientId(provider: string): string {
   const ids: Record<string, string> = {
     codex: "app_EMoamEEZ73f0CkXaXp7hrann",
-    xai: "rigal-cli",
-    gemini: "rigal-cli.apps.googleusercontent.com",
-    qwen: "rigal-cli",
+    xai: "argent-cli",
+    gemini: "argent-cli.apps.googleusercontent.com",
+    qwen: "argent-cli",
   }
-  return ids[provider] ?? "rigal-cli"
+  return ids[provider] ?? "argent-cli"
 }

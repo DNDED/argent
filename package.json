@@ -1,15 +1,15 @@
 {
-  "name": "rigal",
+  "name": "argent",
   "version": "0.1.0",
   "private": true,
-  "description": "RIGAL — The universal AI coding harness. Any model, any provider, any platform.",
+  "description": "ARGENT — The universal AI coding harness. Any model, any provider, any platform.",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun run --cwd packages/rigal dev",
-    "build": "bun run packages/core/build.ts && bun run packages/llm/build.ts && bun run packages/integrations/build.ts && bun run packages/rigal/build.ts",
-    "typecheck": "bun --eval \"import './packages/core/tsconfig.json'; import './packages/llm/tsconfig.json'; import './packages/rigal/tsconfig.json'\" 2>/dev/null; bun x tsc --noEmit -p packages/core/tsconfig.json && bun x tsc --noEmit -p packages/llm/tsconfig.json && bun x tsc --noEmit -p packages/rigal/tsconfig.json",
+    "dev": "bun run --cwd packages/argent dev",
+    "build": "bun run packages/core/build.ts && bun run packages/llm/build.ts && bun run packages/integrations/build.ts && bun run packages/argent/build.ts",
+    "typecheck": "bun --eval \"import './packages/core/tsconfig.json'; import './packages/llm/tsconfig.json'; import './packages/argent/tsconfig.json'\" 2>/dev/null; bun x tsc --noEmit -p packages/core/tsconfig.json && bun x tsc --noEmit -p packages/llm/tsconfig.json && bun x tsc --noEmit -p packages/argent/tsconfig.json",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "lint": "bun x oxlint",

@@ -20,12 +20,12 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "paths": {
-      "@rigal/core": ["./packages/core/src/index.ts"],
-      "@rigal/core/*": ["./packages/core/src/*"],
-      "@rigal/llm": ["./packages/llm/src/index.ts"],
-      "@rigal/llm/*": ["./packages/llm/src/*"],
-      "@rigal/integrations": ["./packages/integrations/src/index.ts"],
-      "@rigal/integrations/*": ["./packages/integrations/src/*"]
+      "@argent/core": ["./packages/core/src/index.ts"],
+      "@argent/core/*": ["./packages/core/src/*"],
+      "@argent/llm": ["./packages/llm/src/index.ts"],
+      "@argent/llm/*": ["./packages/llm/src/*"],
+      "@argent/integrations": ["./packages/integrations/src/index.ts"],
+      "@argent/integrations/*": ["./packages/integrations/src/*"]
     }
   },
   "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx"],

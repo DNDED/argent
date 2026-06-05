@@ -125,8 +125,8 @@ const openrouter: ProviderDescriptor = {
     "meta-llama/llama-3.3-70b",
   ],
   headers: {
-    "HTTP-Referer": "https://rigal.dev",
-    "X-Title": "RIGAL",
+    "HTTP-Referer": "https://argent.dev",
+    "X-Title": "ARGENT",
   },
   features: {
     streaming: true,
@@ -272,7 +272,7 @@ const xaiOauth: ProviderDescriptor = {
     "grok-2",
   ],
   oauthConfig: {
-    clientId: "xai-rigal-client",
+    clientId: "xai-argent-client",
     tokenUrl: "https://x.ai/.well-known/openid-configuration/token",
     authUrl: "https://x.ai/.well-known/openid-configuration/authorize",
     scopes: ["openid", "email"],
@@ -324,7 +324,7 @@ const qwenOauth: ProviderDescriptor = {
     "qwen-max",
   ],
   oauthConfig: {
-    clientId: "qwen-rigal-client",
+    clientId: "qwen-argent-client",
     tokenUrl: "https://account.alibabacloud.com/oauth/token",
     authUrl: "https://account.alibabacloud.com/oauth/authorize",
     scopes: ["openid"],
@@ -578,7 +578,7 @@ const minimaxOauth: ProviderDescriptor = {
     "minimax-m2.7",
   ],
   oauthConfig: {
-    clientId: "minimax-rigal-client",
+    clientId: "minimax-argent-client",
     tokenUrl: "https://api.minimax.chat/oauth/token",
     authUrl: "https://api.minimax.chat/oauth/authorize",
     scopes: ["read", "write"],

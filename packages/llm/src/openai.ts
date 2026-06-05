@@ -1,4 +1,4 @@
-import type { Message, ToolCall, MessageContent } from "@rigal/core"
+import type { Message, ToolCall, MessageContent } from "@argent/core"
 import type { LLMProvider, ProviderOptions, ProviderResponse, ProviderStreamEvent } from "./provider.js"
 
 export function createOpenAIProvider(options: ProviderOptions): LLMProvider {

@@ -1,4 +1,4 @@
-import type { Message, ToolCall, MessageContent, AssistantMessage, ToolResultMessage } from "@rigal/core"
+import type { Message, ToolCall, MessageContent, AssistantMessage, ToolResultMessage } from "@argent/core"
 import type { LLMProvider, ProviderOptions, ProviderResponse, ProviderStreamEvent } from "./provider.js"
 
 export function createAnthropicProvider(options: ProviderOptions): LLMProvider {

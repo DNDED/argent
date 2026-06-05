@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package: [core, llm, rigal]
+        package: [core, llm, argent]
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -21,7 +21,7 @@ jobs:
       - run: bun test
         working-directory: packages/${{ matrix.package }}
       - run: bun run build
-        working-directory: packages/rigal
+        working-directory: packages/argent
 
   lint:
     runs-on: ubuntu-latest
@@ -41,4 +41,4 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bun run packages/rigal/test/smoke.ts
+      - run: bun run packages/argent/test/smoke.ts

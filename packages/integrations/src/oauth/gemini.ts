@@ -2,7 +2,7 @@ import { randomBytes, createHash } from "node:crypto"
 import { exec } from "node:child_process"
 import type { AuthStore, OAuthToken } from "./auth-store.js"
 
-const CLIENT_ID = "rigal-cli.apps.googleusercontent.com"
+const CLIENT_ID = "argent-cli.apps.googleusercontent.com"
 const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 const TOKEN_URL = "https://oauth2.googleapis.com/token"
 const SCOPES = "https://www.googleapis.com/auth/generative-language"

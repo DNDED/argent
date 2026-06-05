@@ -1,7 +1,7 @@
 import { exec } from "node:child_process"
 import type { AuthStore, OAuthToken } from "./auth-store.js"
 
-const CLIENT_ID = "rigal-cli"
+const CLIENT_ID = "argent-cli"
 const DEVICE_CODE_URL = "https://api.minimaxi.chat/v1/oauth2/device/code"
 const TOKEN_URL = "https://api.minimaxi.chat/v1/oauth2/token"
 const AUTH_URL = "https://platform.minimaxi.com/device"

@@ -12,7 +12,7 @@ describe("SessionService", () => {
   test("creates a session with an ID and defaults", () => {
     const session = sessions.create("build", { provider: "openai", model: "gpt-4o" }, "/tmp/test")
 
-    expect(session.id).toMatch(/^rigal-/)
+    expect(session.id).toMatch(/^argent-/)
     expect(session.agentName).toBe("build")
     expect(session.model.provider).toBe("openai")
     expect(session.model.model).toBe("gpt-4o")

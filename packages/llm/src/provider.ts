@@ -1,4 +1,4 @@
-import type { Message } from "@rigal/core"
+import type { Message } from "@argent/core"
 
 export interface ProviderOptions {
   apiKey: string

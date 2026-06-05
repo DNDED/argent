@@ -29,8 +29,8 @@ describe("ConfigService", () => {
   })
 
   test("returns working directory", () => {
-    const cfg = new ConfigService("/tmp/rigal-test")
-    expect(cfg.getWorkingDir()).toBe("/tmp/rigal-test")
+    const cfg = new ConfigService("/tmp/argent-test")
+    expect(cfg.getWorkingDir()).toBe("/tmp/argent-test")
   })
 
   test("setProvider updates config", () => {

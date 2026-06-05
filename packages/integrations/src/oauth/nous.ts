@@ -1,7 +1,7 @@
 import { exec } from "node:child_process"
 import type { AuthStore, OAuthToken } from "./auth-store.js"
 
-const CLIENT_ID = "rigal-cli"
+const CLIENT_ID = "argent-cli"
 const DEVICE_CODE_URL = "https://auth.nousresearch.com/oauth/device/code"
 const TOKEN_URL = "https://auth.nousresearch.com/oauth/token"
 const AUTH_URL = "https://auth.nousresearch.com/activate"

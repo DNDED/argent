@@ -2,7 +2,7 @@ import { randomBytes, createHash } from "node:crypto"
 import { exec } from "node:child_process"
 import type { AuthStore, OAuthToken } from "./auth-store.js"
 
-const CLIENT_ID = "rigal-cli"
+const CLIENT_ID = "argent-cli"
 const DISCOVERY_URL = "https://auth.x.ai/.well-known/openid-configuration"
 const SCOPES = "openid profile email offline_access"
 

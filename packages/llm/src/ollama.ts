@@ -1,5 +1,5 @@
 import type { LLMProvider, ProviderOptions, ProviderResponse } from "./provider.js"
-import type { Message } from "@rigal/core"
+import type { Message } from "@argent/core"
 
 export function createOllamaProvider(options: ProviderOptions): LLMProvider {
   const baseUrl = options.baseUrl || "http://localhost:11434/v1"

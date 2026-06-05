@@ -1,4 +1,4 @@
-import type { RigalConfig, ProviderConfig, Agent, ToolPermission } from "../types.js"
+import type { ArgentConfig, ProviderConfig, Agent, ToolPermission } from "../types.js"
 
 const DEFAULT_AGENTS: Agent[] = [
   {
@@ -14,7 +14,7 @@ const DEFAULT_AGENTS: Agent[] = [
       glob: "allow",
       webfetch: "allow",
     },
-    systemPrompt: `You are RIGAL, a universal coding agent. 
+    systemPrompt: `You are ARGENT, a universal coding agent. 
 You operate as a CLI coding assistant. 
 
 Guidelines:
@@ -39,7 +39,7 @@ Guidelines:
       glob: "allow",
       webfetch: "allow",
     },
-    systemPrompt: `You are RIGAL Plan mode — a read-only analysis agent.
+    systemPrompt: `You are ARGENT Plan mode — a read-only analysis agent.
 You explore codebases, plan changes, and analyze architecture.
 You cannot edit files or run bash commands without explicit permission.
 Focus on understanding and explaining, not modifying.`,
@@ -58,7 +58,7 @@ Focus on understanding and explaining, not modifying.`,
       glob: "allow",
       webfetch: "allow",
     },
-    systemPrompt: `You are RIGAL Explore — a fast codebase explorer.
+    systemPrompt: `You are ARGENT Explore — a fast codebase explorer.
 Search files, find patterns, read code, and report findings.
 You cannot modify anything. Be thorough but fast.`,
     color: "#10b981",
@@ -66,7 +66,7 @@ You cannot modify anything. Be thorough but fast.`,
   },
 ]
 
-const DEFAULT_CONFIG: RigalConfig = {
+const DEFAULT_CONFIG: ArgentConfig = {
   permission: {
     bash: "ask",
     read: "allow",
@@ -79,7 +79,7 @@ const DEFAULT_CONFIG: RigalConfig = {
 }
 
 export class ConfigService {
-  private config: RigalConfig
+  private config: ArgentConfig
   private agents: Agent[]
   private workingDir: string
 
@@ -96,15 +96,15 @@ export class ConfigService {
     this.config = { ...DEFAULT_CONFIG, ...env }
   }
 
-  private loadFromEnv(): Partial<RigalConfig> {
-    const cfg: Partial<RigalConfig> = {}
+  private loadFromEnv(): Partial<ArgentConfig> {
+    const cfg: Partial<ArgentConfig> = {}
 
-    if (process.env.RIGAL_PROVIDER) {
+    if (process.env.ARGENT_PROVIDER) {
       cfg.provider = {
-        type: process.env.RIGAL_PROVIDER,
-        apiKey: process.env[`${process.env.RIGAL_PROVIDER.toUpperCase()}_API_KEY`],
-        baseUrl: process.env[`${process.env.RIGAL_PROVIDER.toUpperCase()}_BASE_URL`],
-        model: process.env.RIGAL_MODEL || process.env[`${process.env.RIGAL_PROVIDER.toUpperCase()}_MODEL`],
+        type: process.env.ARGENT_PROVIDER,
+        apiKey: process.env[`${process.env.ARGENT_PROVIDER.toUpperCase()}_API_KEY`],
+        baseUrl: process.env[`${process.env.ARGENT_PROVIDER.toUpperCase()}_BASE_URL`],
+        model: process.env.ARGENT_MODEL || process.env[`${process.env.ARGENT_PROVIDER.toUpperCase()}_MODEL`],
       }
     }
 
@@ -130,7 +130,7 @@ export class ConfigService {
 
   private loadAgents(): void {}
 
-  getConfig(): RigalConfig {
+  getConfig(): ArgentConfig {
     return this.config
   }
 

@@ -1,5 +1,5 @@
 {
-  "name": "@rigal/app",
+  "name": "@argent/app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@rigal/ui": "workspace:*",
+    "@argent/ui": "workspace:*",
     "@solidjs/router": "^0.15.0",
     "solid-js": "^1.9.0"
   },

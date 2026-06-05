@@ -6,7 +6,7 @@ export class SessionService {
   private sessions: Map<string, Session> = new Map()
 
   create(agentName: string, model: ModelRef, workingDir: string): Session {
-    const id = `rigal-${Date.now()}-${++sessionCounter}`
+    const id = `argent-${Date.now()}-${++sessionCounter}`
     const session: Session = {
       id,
       agentName,

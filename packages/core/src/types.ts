@@ -96,7 +96,7 @@ export interface ProviderConfig {
   headers?: Record<string, string>
 }
 
-export interface RigalConfig {
+export interface ArgentConfig {
   provider?: ProviderConfig
   permission?: Record<string, ToolPermission>
   reference?: Record<string, string>

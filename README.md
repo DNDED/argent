@@ -1,4 +1,4 @@
-# RIGAL
+# ARGENT
 
 The universal AI coding harness. Any model, any provider, any platform.
 
@@ -6,20 +6,20 @@ The universal AI coding harness. Any model, any provider, any platform.
 
 ```bash
 # Install globally
-npm i -g rigal
+npm i -g argent
 
 # Or via curl
-curl -fsSL https://rigal.dev/install | bash
+curl -fsSL https://argent.dev/install | bash
 
 # Launch
-rigal
+argent
 ```
 
-On first run, RIGAL shows an interactive setup wizard to choose your provider.
+On first run, ARGENT shows an interactive setup wizard to choose your provider.
 
 ## 37 Providers
 
-RIGAL works with every major AI provider:
+ARGENT works with every major AI provider:
 
 | # | Provider | Auth | Models |
 |---|----------|------|--------|
@@ -63,7 +63,7 @@ RIGAL works with every major AI provider:
 
 ## Agents
 
-RIGAL includes three built-in agents:
+ARGENT includes three built-in agents:
 
 - **build** (Tab 1) — Full-access agent for development work
 - **plan** (Tab 2) — Read-only agent for analysis and exploration
@@ -92,10 +92,10 @@ Switch agents with `Tab` key.
 Several providers support browser-based OAuth — no API key required:
 
 ```bash
-rigal
+argent
 # Choose [3] Codex OAuth → Opens browser → ChatGPT sign-in → Done!
 
-# Or from within RIGAL:
+# Or from within ARGENT:
 /oauth codex      # OpenAI Codex
 /oauth xai        # xAI Grok
 /oauth gemini     # Google Gemini
@@ -104,15 +104,15 @@ rigal
 /oauth nous       # Nous Research
 ```
 
-Tokens are stored in `~/.rigal/auth.json` and auto-refreshed.
+Tokens are stored in `~/.argent/auth.json` and auto-refreshed.
 
 ## Configuration
 
-Create a `.rigal/` directory in your project:
+Create a `.argent/` directory in your project:
 
 ```
-.rigal/
-├── rigal.jsonc        # Provider, permission, MCP config
+.argent/
+├── argent.jsonc        # Provider, permission, MCP config
 ├── agent/             # Custom agent definitions (*.md)
 │   └── my-agent.md
 ├── command/           # Custom slash commands (*.md)
@@ -125,29 +125,29 @@ Create a `.rigal/` directory in your project:
 
 ### npm (recommended)
 ```bash
-npm i -g rigal
+npm i -g argent
 ```
 
 ### curl (standalone binary)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DNDED/rigal/master/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/DNDED/argent/master/scripts/install.sh | bash
 ```
 
 ### Homebrew
 ```bash
-brew install dnded/rigal/rigal
+brew install dnded/argent/argent
 ```
 
 ### Scoop (Windows)
 ```powershell
-scoop bucket add rigal https://github.com/DNDED/scoop-rigal
-scoop install rigal
+scoop bucket add argent https://github.com/DNDED/scoop-argent
+scoop install argent
 ```
 
 ### From source
 ```bash
-git clone https://github.com/DNDED/rigal.git
-cd rigal
+git clone https://github.com/DNDED/argent.git
+cd argent
 bun install
 bun run build
 npm link
@@ -169,8 +169,8 @@ npm link
 ## Building From Source
 
 ```bash
-git clone https://github.com/DNDED/rigal.git
-cd rigal
+git clone https://github.com/DNDED/argent.git
+cd argent
 bun install
 bun run build          # Build for npm
 bun run build:binary   # Build standalone binaries

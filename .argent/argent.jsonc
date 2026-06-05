@@ -1,0 +1,14 @@
+{
+  "provider": {
+    "type": "openai"
+  },
+  "permission": {
+    "bash": "ask",
+    "read": "allow",
+    "write": "ask",
+    "edit": "ask",
+    "grep": "allow",
+    "glob": "allow",
+    "webfetch": "allow"
+  }
+}

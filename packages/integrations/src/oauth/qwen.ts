@@ -4,7 +4,7 @@ import type { AuthStore, OAuthToken } from "./auth-store.js"
 
 const TOKEN_URL = "https://chat.qwen.ai/api/v1/oauth2/token"
 const AUTH_URL = "https://chat.qwen.ai/login"
-const CLIENT_ID = "rigal-cli"
+const CLIENT_ID = "argent-cli"
 const POLL_INTERVAL_MS = 5000
 const POLL_TIMEOUT_MS = 300_000
 

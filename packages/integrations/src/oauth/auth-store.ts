@@ -27,7 +27,7 @@ export class AuthStore {
   private lockPath: string
 
   constructor() {
-    this.storeDir = join(homedir(), ".rigal")
+    this.storeDir = join(homedir(), ".argent")
     this.storePath = join(this.storeDir, "auth.json")
     this.lockPath = join(this.storeDir, ".auth.lock")
     if (!existsSync(this.storeDir)) {

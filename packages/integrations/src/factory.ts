@@ -1,8 +1,8 @@
-import type { LLMProvider, ProviderOptions } from "@rigal/llm"
+import type { LLMProvider, ProviderOptions } from "@argent/llm"
 import type { ProviderDescriptor } from "./registry/index.js"
-import { createAnthropicProvider } from "@rigal/llm/anthropic"
-import { createOpenAIProvider } from "@rigal/llm/openai"
-import { createOllamaProvider } from "@rigal/llm/ollama"
+import { createAnthropicProvider } from "@argent/llm/anthropic"
+import { createOpenAIProvider } from "@argent/llm/openai"
+import { createOllamaProvider } from "@argent/llm/ollama"
 
 export interface ProviderCredentials {
   apiKey?: string
