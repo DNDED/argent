@@ -8,7 +8,7 @@ import { ChatView } from "../ui/components/ChatView.js"
 import { PromptInput } from "../ui/components/PromptInput.js"
 import { PermissionPrompt } from "../ui/components/PermissionPrompt.js"
 import { WelcomeScreen } from "../ui/components/WelcomeScreen.js"
-import { SetupWizard } from "../ui/components/SetupWizard.js"
+import { SetupMenu } from "../ui/components/SetupMenu.js"
 import { CommandPalette } from "../ui/components/CommandPalette.js"
 import { theme } from "../ui/theme.js"
 import type { Message, ToolCall } from "@argent/core"
@@ -38,12 +38,12 @@ function estimateCost(model: string, tokensIn: number, tokensOut: number): numbe
   return ((tokensIn / 1_000_000) * pricing.input) + ((tokensOut / 1_000_000) * pricing.output)
 }
 
-type AppState = "setup" | "ready"
+type AppState = "ready"
 
 export function App() {
   useApp()
   const { stdout } = useStdout()
-  const [appState, setAppState] = useState<AppState>("setup")
+  const [appState, setAppState] = useState<AppState>("ready")
   const [ready, setReady] = useState(false)
   const [engine, setEngine] = useState<ArgentEngine | null>(null)
   const [commands, setCommands] = useState<CommandHandler | null>(null)
@@ -68,6 +68,7 @@ export function App() {
   const [errors, setErrors] = useState<string[]>([])
   const [commandHistory, setCommandHistory] = useState<string[]>([])
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const [setupMenuOpen, setSetupMenuOpen] = useState(false)
   const [streamingToolCalls, setStreamingToolCalls] = useState<ToolCall[]>([])
   const [swarmTasks, setSwarmTasks] = useState<SwarmTask[]>([])
 
@@ -177,12 +178,7 @@ export function App() {
     engineRef.current = eng
     setCommands(cmd)
     setReady(true)
-
-    if (eng.hasProvider()) {
-      setAppState("ready")
-    } else {
-      setAppState("setup")
-    }
+    setAppState("ready")
 
     return () => {
       eng.onEvent = () => {}
@@ -218,9 +214,6 @@ export function App() {
             setStatusMessage(`OAuth authentication required. Use /oauth ${providerId} to authenticate.`)
             if (statusTimerRef.current) clearTimeout(statusTimerRef.current)
             statusTimerRef.current = setTimeout(() => { setStatusMessage(""); statusTimerRef.current = null }, 6000)
-            setAppState("ready")
-          } else {
-            setAppState("setup")
           }
         }
       } else {
@@ -246,13 +239,23 @@ export function App() {
           setCommandPaletteOpen(true)
           return
         }
+        if (result.message === "SETUP_MENU") {
+          setSetupMenuOpen(true)
+          return
+        }
         if (result.message === "SETUP_WIZARD") {
-          setAppState("setup")
+          setAppState("ready")
           return
         }
         if (result.message?.startsWith("SETUP_PROVIDER:")) {
-          const providerId = result.message.slice("SETUP_PROVIDER:".length)
-          handleSetupComplete(providerId)
+          const providerMsg = result.message.slice("SETUP_PROVIDER:".length)
+          const [providerId, hint] = providerMsg.split("|HINT:")
+          handleSetupComplete(providerId || "")
+          if (hint) {
+            setStatusMessage(`Provider set! ${hint}\nNext: /model to pick a model`)
+            if (statusTimerRef.current) clearTimeout(statusTimerRef.current)
+            statusTimerRef.current = setTimeout(() => { setStatusMessage(""); statusTimerRef.current = null }, 6000)
+          }
           return
         }
         if (result.message?.startsWith("CUSTOM_COMMAND:")) {
@@ -305,6 +308,24 @@ export function App() {
     (command: string) => {
       setCommandPaletteOpen(false)
       handleSubmit(command)
+    },
+    [handleSubmit]
+  )
+
+  const handleSetupMenuSelect = useCallback(
+    (item: "provider" | "model" | "reasoning" | "apikey" | "agent") => {
+      setSetupMenuOpen(false)
+      if (item === "provider") {
+        handleSubmit("/provider")
+      } else if (item === "model") {
+        handleSubmit("/model")
+      } else if (item === "reasoning") {
+        handleSubmit("/reasoning")
+      } else if (item === "apikey") {
+        handleSubmit("/setup")
+      } else if (item === "agent") {
+        handleSubmit("/agent")
+      }
     },
     [handleSubmit]
   )
@@ -387,17 +408,20 @@ export function App() {
     )
   }
 
-  if (appState === "setup") {
-    return (
-      <SetupWizard
-        onComplete={handleSetupComplete}
-        onSkip={() => setAppState("ready")}
-      />
-    )
-  }
-
   return (
     <Box flexDirection="column" height="100%" paddingX={horizontalPadding}>
+      <SetupMenu
+        isOpen={setupMenuOpen}
+        onClose={() => setSetupMenuOpen(false)}
+        onSelect={handleSetupMenuSelect}
+        currentValues={{
+          provider: provider,
+          model: model,
+          reasoning: engine?.getReasoning() || "medium",
+          apiKey: engine?.hasApiKey() || false,
+          agent: agentName,
+        }}
+      />
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}

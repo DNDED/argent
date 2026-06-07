@@ -109,6 +109,17 @@ export function WelcomeScreen({ width = 80, engine }: { width?: number; engine?:
         </Box>
       )}
 
+      {engine && !engine.hasProvider() && (
+        <Box marginTop={2} flexDirection="column" alignItems="center">
+          <Text color={theme.colors.warning}>
+            {theme.icons.warning} No provider configured
+          </Text>
+          <Text color={theme.colors.textDim}>
+            Run /setup or /provider to get started
+          </Text>
+        </Box>
+      )}
+
       <Box marginTop={2}>
         <Text color={theme.colors.textMuted}>Type a message to begin</Text>
       </Box>

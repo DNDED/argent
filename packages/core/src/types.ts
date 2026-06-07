@@ -1,4 +1,5 @@
 export type ToolPermission = "allow" | "deny" | "ask"
+export type ReasoningLevel = "low" | "medium" | "high" | "max"
 
 export interface ToolDef {
   name: string
@@ -103,6 +104,7 @@ export interface ProviderConfig {
 
 export interface ArgentConfig {
   provider?: ProviderConfig
+  reasoning?: ReasoningLevel
   permission?: Record<string, ToolPermission>
   mcp?: Record<string, unknown>
 }

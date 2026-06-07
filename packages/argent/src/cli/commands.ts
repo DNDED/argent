@@ -2,6 +2,7 @@ import type { ArgentEngine } from "./engine.js"
 import type { CommandDef } from "@argent/core"
 import { providerCommand } from "./commands/provider.js"
 import { modelCommand } from "./commands/model.js"
+import { reasoningCommand } from "./commands/reasoning.js"
 import { oauthCommand } from "./commands/oauth.js"
 import { renderSetupPrompt, processSetupSelection, renderApiKeyPrompt } from "./commands/setup.js"
 import { listProviders } from "@argent/integrations"
@@ -55,7 +56,7 @@ export class CommandHandler {
   loadCustomCommands(): void {
     const defs = this.engine.config.getCommands()
     const builtins = new Set([
-      "/help", "/agent", "/model", "/provider", "/oauth", "/setup",
+      "/help", "/agent", "/model", "/provider", "/reasoning", "/oauth", "/setup",
       "/clear", "/undo", "/exit", "/quit", "/status",
       "/compact", "/fork", "/resume", "/rewind", "/branch", "/rename",
       "/diff", "/review", "/lint", "/security", "/test",
@@ -111,7 +112,18 @@ export class CommandHandler {
         if (result.startsWith("MODEL_SELECT:")) {
           const modelName = result.slice("MODEL_SELECT:".length)
           this.engine.setModel(modelName)
-          return { handled: true, message: `Model set to: ${modelName}` }
+          return { handled: true, message: `Model set to: ${modelName}\n\nNext step:\n  Choose reasoning level: /reasoning (default: medium)` }
+        }
+        return { handled: true, message: result }
+      }
+
+      case "/reasoning": {
+        const currentReasoning = this.engine.getReasoning()
+        const result = reasoningCommand(args, currentReasoning)
+        if (result.startsWith("REASONING_SELECT:")) {
+          const level = result.slice("REASONING_SELECT:".length) as "low" | "medium" | "high" | "max"
+          this.engine.setReasoning(level)
+          return { handled: true, message: `Reasoning level set to: ${level}` }
         }
         return { handled: true, message: result }
       }
@@ -138,7 +150,7 @@ export class CommandHandler {
       }
 
       case "/setup": {
-        return { handled: true, message: `SETUP_WIZARD` }
+        return { handled: true, message: `SETUP_MENU` }
       }
 
       case "/clear":

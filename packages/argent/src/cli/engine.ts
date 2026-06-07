@@ -193,6 +193,24 @@ export class ArgentEngine {
     this.initProvider()
   }
 
+  getReasoning(): "low" | "medium" | "high" | "max" {
+    return this.config.getReasoning()
+  }
+
+  setReasoning(level: "low" | "medium" | "high" | "max"): void {
+    this.config.setReasoning(level)
+  }
+
+  hasApiKey(): boolean {
+    const pc = this.config.getProvider()
+    if (!pc) return false
+    if (this.currentProviderDescriptor?.authType === "none") return true
+    if (this.currentProviderDescriptor?.authType === "oauth") {
+      return this.oauthManager.getToken(this.currentProviderDescriptor.id) !== undefined
+    }
+    return !!(pc.apiKey && pc.apiKey.length > 0)
+  }
+
   getAvailableModels(): string[] {
     if (this.currentProviderDescriptor) {
       return this.currentProviderDescriptor.models
@@ -373,7 +391,14 @@ export class ArgentEngine {
 
       try {
         if (!this.abortController) this.abortController = new AbortController()
-        const stream = this.provider!.stream(allMsgs, toolDefs.length > 0 ? toolDefs : undefined, undefined, this.abortController!.signal)
+        const reasoningToTemp: Record<string, number> = {
+          low: 0.3,
+          medium: 0.7,
+          high: 0.9,
+          max: 1.0,
+        }
+        const temperature = reasoningToTemp[this.getReasoning()] || 0.7
+        const stream = this.provider!.stream(allMsgs, toolDefs.length > 0 ? toolDefs : undefined, { temperature }, this.abortController!.signal)
 
         for await (const event of stream) {
           if (event.type === "start") continue

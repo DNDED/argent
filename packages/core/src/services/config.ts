@@ -1,4 +1,4 @@
-import type { ArgentConfig, ProviderConfig, Agent, ToolPermission } from "../types.js"
+import type { ArgentConfig, ProviderConfig, Agent, ToolPermission, ReasoningLevel } from "../types.js"
 import { readFileSync, existsSync, readdirSync } from "node:fs"
 import { join, sep } from "node:path"
 import { homedir } from "node:os"
@@ -500,6 +500,14 @@ export class ConfigService {
 
   getWorkingDir(): string {
     return this.workingDir
+  }
+
+  getReasoning(): ReasoningLevel {
+    return this.config.reasoning || "medium"
+  }
+
+  setReasoning(level: ReasoningLevel): void {
+    this.config.reasoning = level
   }
 
   setProvider(provider: ProviderConfig): void {

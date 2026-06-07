@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "packages/argent/src/cli/engine.ts": {
-    "mtime": 1780795592.2220287,
-    "ast_hash": "e5853a772476243aeef5eda56e6e9e78",
+    "mtime": 1780798126.2393835,
+    "ast_hash": "547bf35d1cfadd42688e57b7ce679473",
     "semantic_hash": ""
   },
   "packages/argent/src/cli/main.tsx": {
@@ -300,8 +300,8 @@
     "semantic_hash": ""
   },
   "packages/argent/src/ui/components/SetupWizard.tsx": {
-    "mtime": 1780790178.4564974,
-    "ast_hash": "3c8de9d0a3edbd74d4cc3887b7387f86",
+    "mtime": 1780798173.0448287,
+    "ast_hash": "fadf0aa87865c780e762a89bd2eb8587",
     "semantic_hash": ""
   },
   "packages/argent/src/ui/components/StatusBar.tsx": {
@@ -460,13 +460,13 @@
     "semantic_hash": ""
   },
   "packages/llm/src/anthropic.ts": {
-    "mtime": 1780795647.2154229,
-    "ast_hash": "239d33171e9e3070dfdb5f3f4f01dc76",
+    "mtime": 1780798226.2643335,
+    "ast_hash": "29664e309d45d403968ed221c6d26403",
     "semantic_hash": ""
   },
   "packages/llm/src/gemini.ts": {
-    "mtime": 1780795655.5254831,
-    "ast_hash": "1ad9125edbea2b960349cc5dadb598be",
+    "mtime": 1780798257.3686278,
+    "ast_hash": "f678553d06c44ceb1d65445e61591201",
     "semantic_hash": ""
   },
   "packages/llm/src/index.ts": {
@@ -475,13 +475,13 @@
     "semantic_hash": ""
   },
   "packages/llm/src/ollama.ts": {
-    "mtime": 1780795632.5643167,
-    "ast_hash": "646166e69d9d6cb8f8487e20d6fe5203",
+    "mtime": 1780798274.300788,
+    "ast_hash": "b42ae2d6d14838932e7ac55ff2743559",
     "semantic_hash": ""
   },
   "packages/llm/src/openai.ts": {
-    "mtime": 1780795639.6173677,
-    "ast_hash": "77a30418e16fe1ec950f780c55b22db7",
+    "mtime": 1780798198.2260675,
+    "ast_hash": "032eeb549433a916b47f22e586f4ad2e",
     "semantic_hash": ""
   },
   "packages/llm/src/provider.ts": {
