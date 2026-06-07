@@ -4,8 +4,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@argent/core": "workspace:*",
-    "@argent/llm": "workspace:*",
     "effect": "^3.14.0"
   }
 }
